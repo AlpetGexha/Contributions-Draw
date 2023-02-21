@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Github - Contribute Draw</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body>
+    <div 
+        x-data="dataset()" 
+        x-init="
+            selectedDays = JSON.parse(localStorage.getItem('selectedDays') || '[]')
+        ">
+
+        <!-- Some Data test show -->
+        <div>Start date: <span x-text="startDate"></span></div>
+        <div>End date: <span x-text="endDate"></span></div>
+        <div>Day left: <span x-text="invalidDays"></span></div>
+        <div>Selected Yeas: <span x-text="selectedYear"></span></div>
+
+
+        <button x-on:click="decYear()">-</button>
+        <button x-on:click="incYear()">+</button>
+        <button x-on:click="refreshData()">Clean All</button>
+        <!-- <button x-on:click="fillSelectedDays('Alpet')">Alpet Test</button> -->
+
+        <div>
+            <button x-on:click="undo()" :disabled="undoHistory.length === 0">
+                Undo
+            </button>
+
+            <button x-on:click="redo()" :disabled="redoHistory.length === 0">
+                Redo
+            </button>
+
+            <br>
+            <label for="">How many time u want to commit</label>
+            <input x-model="commits" type="number" style="width: 30px;" />
+
+            <button x-on:click.prevent="generateDate()">Download file</button>
+            <br>
+
+            <span>When u donwload the file move to repo directory and run python <code>python art.py</code></span>
+
+            <br />
+
+            <div class="graph">
+
+                <!-- Fetch Months -->
+                <ul class="months">
+                    <template x-for="month in monthLi">
+                        <li x-text="month"></li>
+                    </template>
+                </ul>
+
+                <!-- Fetch Days -->
+                <ul class="days">
+                    <template x-for="day in daysLi">
+                        <li x-text="day"></li>
+                    </template>
+                </ul>
+
+                <!-- Make disable box to fix the order -->
+                <ul class="squares">
+                    <template x-for="day in startDay">
+                        <label>
+                            <input type="checkbox" disabled />
+                        </label>
+                    </template>
+
+                    <!-- Fetch Add Input Data -->
+                    <template x-for="day in days">
+                        <label>
+                            <input 
+                                type="checkbox" 
+                                x-model="selectedDays" 
+                                x-bind:title="day"
+                                x-bind:aria-label="day" 
+                                x-bind:id="day" 
+                                x-bind:value="day"
+                                x-on:change="addToLocalStorage('selectedDays', selectedDays)" />
+                        </label>
+                    </template>
+
+                    <!-- Fetch day on futer -->
+                    <template x-for="invalidDay in invalidDays">
+                        <label>
+                            <input type="checkbox" disabled />
+                        </label>
+                    </template>
+                </ul>
+            </div>
+
+            <div x-show="selectedDays.length > 0" x-cloak>
+                <pre x-text="selectedDays" style="overflow-x: auto;"></pre>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
